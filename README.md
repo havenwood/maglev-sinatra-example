@@ -2,7 +2,7 @@
 
 Using Maglev's enterprise-grade NoSQL persistent object store with Sinatra ftw.
 
-To run the app:
+To run the example app:
 
 1) Use Maglev: `rvm install maglev; rvm maglev` (or however you prefer to install Rubies)
 
@@ -10,7 +10,7 @@ To run the app:
 
 3) Download and run app.rb: `ruby app.rb` =)
 
-Now you can add or remove people:
+Now you can point your browser to `localhost:4567` and add or remove people:
 
 ##People
 
