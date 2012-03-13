@@ -8,7 +8,7 @@ To run the app:
 
 2) Install gems: `gem install sinatra mag`
 
-3) Download and run app.rb: `ruby app.rb
+3) Download and run app.rb: `ruby app.rb`
 
 Now you can add or remove people:
 
