@@ -9,20 +9,23 @@ configure(:development) do
 end
 
 get '/' do
+	Mag.box ||= {}
+	unless Mag.box[:people].kind_of? Array
+		Mag.box[:people] = []
+		Mag.commit
+	end
+	Mag.abort
   erb :index
 end
 
 post '/' do
   name = params[:name]
-
-  redirect '/' if name.empty? #TODO: return appropriate http error
-
+  redirect '/' if name.empty? #TODO: return http error
   name.capitalize!
-
-  Mag.pull
+  Mag.abort
 
   if Mag.box[:people].include? name
-    #TODO: return appropriate http error
+    #TODO: return http error
   else
     Mag.box[:people] << name
     Mag.box[:people].sort!
@@ -34,18 +37,14 @@ end
 
 post '/remove' do
   name = params[:name]
-
-  redirect '/' if name.empty? #TODO: return appropriate http error
-
-  name.capitalize!
-
-  Mag.pull
+  redirect '/' if name.empty? #TODO: return http error
+  Mag.abort
 
   if Mag.box[:people].include? name
     Mag.box[:people].delete(name)
     Mag.commit
   else
-    #TODO: return appropriate http error
+    #TODO: return http error
   end
 
   redirect '/'
@@ -71,9 +70,11 @@ __END__
 <section>
   <h1>People</h1>
   <ul>
-    <% Mag.box[:people].each do |person| %>
-      <li><%= "#{person}" %></li>
-    <% end %>
+    <% unless Mag.box[:people].empty? %>
+			<% Mag.box[:people].each do |person| %>
+      	<li><%= "#{person}" %></li>
+    	<% end %>
+		<% end %>
   </ul>
 </section>
 <section>
