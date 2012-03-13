@@ -1,4 +1,4 @@
-#Simple Maglev Persistent Store App With Sinatra
+#Simple Sinatra App with Maglev's Built-in NoSQL DB
 
 Using Maglev's enterprise-grade NoSQL persistent object store with Sinatra ftw?
 
