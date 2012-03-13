@@ -10,7 +10,7 @@ To run the app:
 
 3) Download and run app.rb: `ruby app.rb
 
-Now you can add or remove people from you 'list':
+Now you can add or remove people:
 
 ##People
 
