@@ -1,7 +1,9 @@
 require 'rubygems'
 require 'sinatra'
-require 'mag'
+require 'mag' #tiny helper library to abbreviate Maglev commands to Mag
 
+## A bit of Maglev-specific configuration for Sinatra
+#
 configure(:development) do
   set :sessions, true
   set :run,      true unless defined? DO_NOT_RUN
@@ -9,26 +11,37 @@ configure(:development) do
 end
 
 get '/' do
-	Mag.box ||= {}
-	unless Mag.box[:people].kind_of? Array
-		Mag.box[:people] = []
+  ## Abort transaction to get latest store
+  #
+  Mag.abort
+	
+  ## If store is empty, make a Hash
+  #
+  Mag.store ||= {} && Mag.commit
+	
+  ## If store Hash doesn't have a :people key, make it
+  #
+  unless Mag.store[:people].kind_of? Array
+		Mag.store[:people] = []
 		Mag.commit
 	end
-	Mag.abort
+
+  ## Render page
+  #
   erb :index
 end
 
 post '/' do
   name = params[:name]
-  redirect '/' if name.empty? #TODO: return http error
+  redirect '/' if name.empty?
   name.capitalize!
   Mag.abort
 
-  if Mag.box[:people].include? name
-    #TODO: return http error
+  if Mag.store[:people].include? name
+    redirect back
   else
-    Mag.box[:people] << name
-    Mag.box[:people].sort!
+    Mag.store[:people] << name
+    Mag.store[:people].sort!
     Mag.commit
   end
 
@@ -37,14 +50,13 @@ end
 
 post '/remove' do
   name = params[:name]
-  redirect '/' if name.empty? #TODO: return http error
+  redirect '/' if name.empty?
+  name.capitalize!
   Mag.abort
 
-  if Mag.box[:people].include? name
-    Mag.box[:people].delete(name)
+  if Mag.store[:people].include? name
+    Mag.store[:people].delete(name)
     Mag.commit
-  else
-    #TODO: return http error
   end
 
   redirect '/'
@@ -53,10 +65,10 @@ end
 __END__
 
 @@layout
-<!DOCTYPE html>
-<html lang='en' xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'>
+<!doctype html>
+<html lang='en'>
 <head>
-  <title>API</title>
+  <title>Maglev-Sinatra</title>
   <meta charset='utf-8' />
 </head>
 <body>
@@ -70,11 +82,9 @@ __END__
 <section>
   <h1>People</h1>
   <ul>
-    <% unless Mag.box[:people].empty? %>
-			<% Mag.box[:people].each do |person| %>
-      	<li><%= "#{person}" %></li>
-    	<% end %>
-		<% end %>
+		<% Mag.store[:people].each do |person| %>
+    	<li><%= "#{person}" %></li>
+  	<% end %>
   </ul>
 </section>
 <section>
