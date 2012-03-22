@@ -2,8 +2,12 @@ require 'rubygems'
 require 'sinatra'
 require 'mag' #tiny helper library to abbreviate Maglev commands to Mag
 
+<<<<<<< HEAD
 ## A bit of Maglev-specific configuration for Sinatra
 #
+=======
+# some Maglev-specific preparation for Sinatra
+>>>>>>> e2f5758e37d944c20cec0508cd21513f3a31f819
 configure(:development) do
   set :sessions, true
   set :run,      true unless defined? DO_NOT_RUN
@@ -11,6 +15,7 @@ configure(:development) do
 end
 
 get '/' do
+<<<<<<< HEAD
   ## Abort transaction to get latest store
   #
   Mag.abort
@@ -28,13 +33,34 @@ get '/' do
 
   ## Render page
   #
+=======
+  Mag.abort
+
+  unless Mag.box
+    Mag.box = {}
+    Mag.commit
+  end
+  
+  unless Mag.box[:people].kind_of? Array
+    Mag.box[:people] = []
+    Mag.commit
+  end
+  
+>>>>>>> e2f5758e37d944c20cec0508cd21513f3a31f819
   erb :index
 end
 
 post '/' do
   name = params[:name]
+<<<<<<< HEAD
   redirect '/' if name.empty?
+=======
+  
+  redirect '/' if name.empty? #TODO: return http error
+  
+>>>>>>> e2f5758e37d944c20cec0508cd21513f3a31f819
   name.capitalize!
+
   Mag.abort
 
   if Mag.store[:people].include? name
@@ -50,12 +76,22 @@ end
 
 post '/remove' do
   name = params[:name]
+<<<<<<< HEAD
   redirect '/' if name.empty?
   name.capitalize!
   Mag.abort
 
   if Mag.store[:people].include? name
     Mag.store[:people].delete(name)
+=======
+  
+  redirect '/' if name.empty? #TODO: return http error
+  
+  Mag.abort
+
+  if Mag.box[:people].include? name
+    Mag.box[:people].delete name
+>>>>>>> e2f5758e37d944c20cec0508cd21513f3a31f819
     Mag.commit
   end
 
@@ -65,7 +101,11 @@ end
 __END__
 
 @@layout
+<<<<<<< HEAD
 <!doctype html>
+=======
+<!DOCTYPE html>
+>>>>>>> e2f5758e37d944c20cec0508cd21513f3a31f819
 <html lang='en'>
 <head>
   <title>Maglev-Sinatra</title>
@@ -82,9 +122,17 @@ __END__
 <section>
   <h1>People</h1>
   <ul>
+<<<<<<< HEAD
 		<% Mag.store[:people].each do |person| %>
     	<li><%= "#{person}" %></li>
   	<% end %>
+=======
+    <% unless Mag.box[:people].empty? %>
+      <% Mag.box[:people].each do |person| %>
+        <li><%= "#{person}" %></li>
+      <% end %>
+    <% end %>
+>>>>>>> e2f5758e37d944c20cec0508cd21513f3a31f819
   </ul>
 </section>
 <section>
